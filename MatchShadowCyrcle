@@ -1,0 +1,74 @@
+package com.wachanga.pregnancy.onboardingV2.step.journeyResults.ui
+
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.util.AttributeSet
+import android.view.View
+import androidx.core.content.ContextCompat
+import com.wachanga.pregnancy.R
+
+/**
+ * Класс для создания тени в виде круга на пользовательском интерфейсе.
+ * Используется для отображения тени вокруг круга с возможностью настройки цвета и прозрачности.
+ */
+class MatchShadow(
+    context: Context?,
+    attrs: AttributeSet?
+) : View(context, attrs) {
+
+    /**
+     * Краска для рисования тени.
+     * Настраивается с использованием цвета, прозрачности и радиуса тени.
+     */
+    private val shadowPaint = Paint().apply {
+        context?.let {
+            ContextCompat.getColor(it, R.color.transparent)
+            alpha = ALPHA_SHADOW
+            setShadowLayer(
+                RADIUS_OF_SHADOW,
+                DEFAULT_DX,
+                DEFAULT_DY,
+                ContextCompat.getColor(it, R.color.yellow_shadow_bg_breath_in)
+            )
+        }
+    }
+
+    init {
+        setLayerType(LAYER_TYPE_SOFTWARE, shadowPaint)
+    }
+
+    /**
+     * Краска для рисования круга.
+     * Настраивается с использованием цвета, сглаживания и формы концов линии.
+     */
+    private val circlePaint = Paint().apply {
+        context?.let {
+            color = ContextCompat.getColor(it, R.color.transparent)
+            isAntiAlias = true
+            strokeCap = Paint.Cap.ROUND
+        }
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        val centerX = width / 2f
+        val centerY = height / 2f
+        val radius = resources.getDimensionPixelSize(R.dimen.shadow_size).toFloat()
+        canvas.drawCircle(centerX + 4, centerY + 4, radius, shadowPaint)
+        canvas.drawCircle(centerX, centerY, radius, circlePaint)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val size = measuredWidth.coerceAtMost(measuredHeight)
+        setMeasuredDimension(size, size)
+    }
+
+    companion object {
+        const val RADIUS_OF_SHADOW = 30f
+        const val DEFAULT_DX = 0f
+        const val DEFAULT_DY = 0f
+        const val ALPHA_SHADOW = 125
+    }
+}
